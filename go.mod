@@ -1,4 +1,4 @@
-module github.com/Southclaws/supervillain
+module github.com/formatsocial/supervillain-go-to-zod
 
 go 1.18
 
