@@ -349,7 +349,7 @@ func isNullable(field reflect.StructField) bool {
 	// nil slices and maps are exported as null so these types are usually nullable
 	if field.Type.Kind() == reflect.Slice || field.Type.Kind() == reflect.Map {
 		// unless the are also optional in which case they are no longer nullable
-		return !isOptional(field)
+		return isOptional(field)
 	}
 	return false
 }

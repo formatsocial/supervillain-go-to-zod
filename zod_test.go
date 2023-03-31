@@ -119,7 +119,7 @@ func TestStringArray(t *testing.T) {
 	}
 	assert.Equal(t,
 		`export const UserSchema = z.object({
-  Tags: z.string().array().nullable(),
+  Tags: z.string().array(),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -137,7 +137,7 @@ func TestStructArray(t *testing.T) {
 		`export const UserSchema = z.object({
   Favourites: z.object({
     Name: z.string(),
-  }).array().nullable(),
+  }).array(),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -155,7 +155,7 @@ func TestStructArrayOptional(t *testing.T) {
 		`export const UserSchema = z.object({
   Favourites: z.object({
     Name: z.string(),
-  }).array().optional(),
+  }).array().optional().nullable(),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -253,7 +253,7 @@ func TestStringArrayNullable(t *testing.T) {
 	assert.Equal(t,
 		`export const UserSchema = z.object({
   Name: z.string(),
-  Tags: z.string().array().nullable(),
+  Tags: z.string().array(),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -333,7 +333,7 @@ func TestMapStringToString(t *testing.T) {
 	assert.Equal(t,
 		`export const UserSchema = z.object({
   Name: z.string(),
-  Metadata: z.record(z.string(), z.string()).nullable(),
+  Metadata: z.record(z.string(), z.string()),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -349,7 +349,7 @@ func TestMapStringToInterface(t *testing.T) {
 	assert.Equal(t,
 		`export const UserSchema = z.object({
   Name: z.string(),
-  Metadata: z.record(z.string(), z.any()).nullable(),
+  Metadata: z.record(z.string(), z.any()),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -412,18 +412,18 @@ export const UserSchema = z.object({
   Age: z.number(),
   Height: z.number(),
   OldPostWithMetaData: PostWithMetaDataSchema,
-  Tags: z.string().array().nullable(),
-  TagsOptional: z.string().array().optional(),
+  Tags: z.string().array(),
+  TagsOptional: z.string().array().optional().nullable(),
   TagsOptionalNullable: z.string().array().optional().nullable(),
   Favourites: z.object({
     Name: z.string(),
-  }).array().nullable(),
-  Posts: PostSchema.array().nullable(),
+  }).array(),
+  Posts: PostSchema.array(),
   Post: PostSchema,
   PostOptional: PostSchema.optional(),
   PostOptionalNullable: PostSchema.optional().nullable(),
-  Metadata: z.record(z.string(), z.string()).nullable(),
-  MetadataOptional: z.record(z.string(), z.string()).optional(),
+  Metadata: z.record(z.string(), z.string()),
+  MetadataOptional: z.record(z.string(), z.string()).optional().nullable(),
   MetadataOptionalNullable: z.record(z.string(), z.string()).optional().nullable(),
   ExtendedProps: z.any(),
   ExtendedPropsOptional: z.any(),
@@ -454,29 +454,29 @@ export type User = z.infer<typeof UserSchema>
 		StructToZodSchema(User{}))
 }
 
-func TestCustom(t *testing.T) {
-	c := NewConverter(map[string]CustomFn{
-		"github.com/Southclaws/supervillain.Decimal": func(c *Converter, t reflect.Type, s, g string, i int) string {
-			return "z.string()"
-		},
-	})
+func TestNullableArray(t *testing.T) {
+	type CreateTemplate struct {
+		// MarkUp Markup of the template
+		MarkUp string `dynamodbav:"markUp" json:"markUp"`
 
-	type Decimal struct {
-		value    int
-		exponent int
-	}
+		// Schema schema of the template
+		Schema map[string]interface{} `dynamodbav:"schema" json:"schema"`
 
-	type User struct {
-		Name  string
-		Money Decimal
+		// Title Name of the Post
+		Title string `dynamodbav:"title" json:"title"`
+
+		// Variations Variations of the template
+		Variations *string `dynamodbav:"variations,omitempty" json:"variations,omitempty"`
 	}
 	assert.Equal(t,
-		`export const UserSchema = z.object({
-  Name: z.string(),
-  Money: z.string(),
+		`export const CreateTemplateSchema = z.object({
+  markUp: z.string(),
+  schema: z.record(z.string(), z.any()),
+  title: z.string(),
+  variations: z.string().optional(),
 })
-export type User = z.infer<typeof UserSchema>
+export type CreateTemplate = z.infer<typeof CreateTemplateSchema>
 
 `,
-		c.Convert(User{}))
+		StructToZodSchema(CreateTemplate{}))
 }
