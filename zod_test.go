@@ -173,7 +173,7 @@ func TestStructArrayOptionalNullable(t *testing.T) {
 		`export const UserSchema = z.object({
   Favourites: z.object({
     Name: z.string(),
-  }).array().optional().nullable(),
+  }).array().optional(),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -222,22 +222,6 @@ func TestStringOptionalNotNullable(t *testing.T) {
 		`export const UserSchema = z.object({
   Name: z.string(),
   Nickname: z.string().optional(),
-})
-export type User = z.infer<typeof UserSchema>
-
-`,
-		StructToZodSchema(User{}))
-}
-
-func TestStringOptionalNullable(t *testing.T) {
-	type User struct {
-		Name     string
-		Nickname **string `json:",omitempty"` // nil values are omitted
-	}
-	assert.Equal(t,
-		`export const UserSchema = z.object({
-  Name: z.string(),
-  Nickname: z.string().optional().nullable(),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -414,17 +398,17 @@ export const UserSchema = z.object({
   OldPostWithMetaData: PostWithMetaDataSchema,
   Tags: z.string().array(),
   TagsOptional: z.string().array().optional().nullable(),
-  TagsOptionalNullable: z.string().array().optional().nullable(),
+  TagsOptionalNullable: z.string().array().optional(),
   Favourites: z.object({
     Name: z.string(),
   }).array(),
   Posts: PostSchema.array(),
   Post: PostSchema,
   PostOptional: PostSchema.optional(),
-  PostOptionalNullable: PostSchema.optional().nullable(),
+  PostOptionalNullable: PostSchema.optional(),
   Metadata: z.record(z.string(), z.string()),
   MetadataOptional: z.record(z.string(), z.string()).optional().nullable(),
-  MetadataOptionalNullable: z.record(z.string(), z.string()).optional().nullable(),
+  MetadataOptionalNullable: z.record(z.string(), z.string()).optional(),
   ExtendedProps: z.any(),
   ExtendedPropsOptional: z.any(),
   ExtendedPropsNullable: z.any(),

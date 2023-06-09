@@ -338,13 +338,7 @@ func isNullable(field reflect.StructField) bool {
 	if field.Type.Kind() == reflect.Ptr {
 		// However, if a pointer field is tagged with "omitempty", it usually cannot be exported as "null"
 		// since nil is a pointer's empty value.
-		if isOptional(field) {
-			// Unless it is a pointer to a slice, a map, a pointer, or an interface
-			// because values with those types can themselves be nil and will be exported as "null".
-			k := field.Type.Elem().Kind()
-			return k == reflect.Ptr || k == reflect.Slice || k == reflect.Map
-		}
-		return true
+		return !isOptional(field)
 	}
 	// nil slices and maps are exported as null so these types are usually nullable
 	if field.Type.Kind() == reflect.Slice || field.Type.Kind() == reflect.Map {
